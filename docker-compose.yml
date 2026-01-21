@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: kiii-project-mongo-1
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: kiii-project-backend-1
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+      - MONGO_HOST=mongo
+      - MONGO_DB=books_db
+
+  frontend:
+    build: ./frontend
+    container_name: kiii-project-frontend-1
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
